@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blob - Essaies</title>
+    <style>
+      body,
+      html {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+        background: #eee;
+      }
+
+      #app {
+        width: 500px;
+        height: 500px;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="app" width="500" height="500"></canvas>
+    <script>
+      const blobZone = document.getElementById("app");
+      const ctx = blobZone.getContext("2d");
+      ctx.globalAlpha = 1;
+      const baseR = 50;     // size of the two circles
+
+      let r1 = baseR;
+      let r2 = baseR;
+      let d = r1 + r2;      // distance between the center of both 
+      let r3 = d / 2;       // half the distance between the two circles?
+
+      const center = { x: blobZone.width / 2, y: blobZone.height / 2 }
+
+      function drawBlob() {
+        const a = r3 + r2;
+        const b = r3 + r1;
+        const c = r1 + r2;        // 
+
+        const C = { x: 0, y: 0 };
+
+        C.y = (b * b + c * c - a * a) / (2 * c);
+        C.x = -Math.sqrt(b * b - C.y * C.y);
+
+        const theta1 = Math.acos(-C.x / b);
+        const theta2 = Math.acos(-C.x / a);
+
+        ctx.beginPath();
+        ctx.arc(
+          center.x,
+          center.y,
+          r1,
+          theta1,
+          Math.PI - theta1,
+          true
+        );
+        ctx.arc(
+          center.x + C.x,
+          center.y + C.y,
+          r3,
+          -theta1,
+          theta2,
+
+        );
+        ctx.arc(
+          center.x,
+          center.y + d,
+          r2,
+          Math.PI + theta2,
+          -theta2,
+          true
+        );
+        ctx.arc(
+          center.x - C.x,
+          center.y + C.y,
+          r3,
+          Math.PI - theta2,
+          Math.PI + theta1,
+
+        );
+
+        ctx.fillStyle = "purple";
+        ctx.stroke();
+      }
+
+      blobZone.addEventListener("mousemove", (e) => {
+        const rect = blobZone.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const diffY = (mouseY - center.y) / center.y;
+        const diffX = (mouseX - center.x) / center.x;
+
+        r1 = baseR + diffY * 20;
+        r2 = baseR - diffY * 20;
+
+        d = r1 + r2;
+        r3 = d / 2;
+
+        ctx.translate(center.x, center.y);
+        ctx.rotate(diffX * 0.04)
+        ctx.translate(-center.x, -center.y);
+      });
+
+      function draw() {
+        ctx.clearRect(0, 0, blobZone.width, blobZone.height);
+        drawBlob();
+        requestAnimationFrame(draw);
+      }
+
+      requestAnimationFrame(draw);
+    </script>
+  </body>
+</html>

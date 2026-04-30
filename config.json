@@ -1,0 +1,26 @@
+{
+  "emailVertices": {
+    "inputLabel": "Quantité de Vertex",
+    "inputType": "text",
+    "dataType": "int",
+    "defaultValue": "32",
+    "selectValues": [],
+    "description": ""
+  },
+  "emailSize": {
+    "inputLabel": "Taille Email",
+    "inputType": "text",
+    "dataType": "int",
+    "defaultValue": "64",
+    "selectValues": [],
+    "description": ""
+  },
+  "emailQuantity": {
+    "inputLabel": "Quantité Emails",
+    "inputType": "text",
+    "dataType": "int",
+    "defaultValue": "64",
+    "selectValues": [],
+    "description": ""
+  }
+}
