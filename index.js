@@ -47,10 +47,21 @@ const fragment = `
   {
       vec4 fg = texture2D(uTexture, vTextureCoord);
 
-      if (fg.a < 0.9)
-      {
-          fg.a = fg.a * 0.4;
+      if (fg.a > 0.9) {
+          fg.a = 1.0;
       }
+      else
+      {
+          if (fg.a < 0.88)
+          {
+              fg.a = 0.0;
+          }
+          else
+          {
+              fg.a = fg.a - (0.9 - fg.a) * (0.9 / (0.9 - 0.88));
+          }
+      }
+
 
       gl_FragColor = fg;
   }
@@ -104,8 +115,8 @@ inputElements.emailQuantity.onchange = generateEmails;
 
 generateEmails();
 
-//   const relativePoint = {
-//     x: event.globalX - email.center.x,
-//     y: event.globalY - email.center.y,
-//   };
-//   email.position.set(relativePoint.x, relativePoint.y);
+app.ticker.add(() => {
+  for (const ball of app.stage.children) {
+    console.log(ball)
+  }
+})

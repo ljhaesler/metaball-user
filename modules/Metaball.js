@@ -1,4 +1,4 @@
-import { Graphics, FillGradient, ColorMatrixFilter } from "pixi.js";
+import { Graphics, FillGradient, ColorMatrixFilter, Sprite} from "pixi.js";
 import "pixi.js/advanced-blend-modes";
 import app from "../index.js";
 
@@ -15,10 +15,11 @@ export class Metaball extends Graphics {
     this._generateBall();
     this._addEventListeners();
 
-    const invertFilter = new ColorMatrixFilter();
-    invertFilter.negative(true);
-    this.filters = [invertFilter];
-    // this.blendMode = "add";
+    // const invertFilter = new ColorMatrixFilter();
+    // invertFilter.negative(true);
+    // this.filters = [alphaThresholdFilter];
+
+
   }
 
   _getCenter() {
@@ -34,8 +35,9 @@ export class Metaball extends Graphics {
 
   _generateBall() {
     this.poly(this.vertices).fill(
-      this.fillGradients[Math.floor(Math.random() * 2)],
+      this.fillGradients[Math.floor(Math.random() * this.fillGradients.length)],
     );
+
   }
 
   _getVertexPoints() {
@@ -63,19 +65,8 @@ export class Metaball extends Graphics {
         outerCenter: { x: 0.5, y: 0.5 },
         outerRadius: 0.5,
         colorStops: [
-          { offset: 0.25, color: "#eeee00ff" }, // Center color
-          { offset: 1, color: "#eeee0000" }, // Edge color
-        ],
-      }),
-      new FillGradient({
-        type: "radial",
-        center: { x: 0.5, y: 0.5 },
-        innerRadius: 0,
-        outerCenter: { x: 0.5, y: 0.5 },
-        outerRadius: 0.5,
-        colorStops: [
-          { offset: 0.25, color: "#ff0000ff" }, // Center color
-          { offset: 1, color: "#ff000000" }, // Edge color
+          { offset: 0.25, color: "#000000ff" }, // Center color
+          { offset: 1, color: "#00000000" }, // Edge color
         ],
       }),
     ];
