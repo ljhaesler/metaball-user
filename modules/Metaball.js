@@ -1,95 +1,47 @@
-import { Graphics, FillGradient, ColorMatrixFilter, Sprite} from "pixi.js";
+import { Graphics, FillGradient, ColorMatrixFilter, Sprite } from "pixi.js";
 import "pixi.js/advanced-blend-modes";
 import app from "../index.js";
 
 export class Metaball extends Graphics {
-  constructor(vertexQuantity, metaballRadius) {
+  constructor({ metaballRadius, containerSize, metaballFill }) {
     super();
 
-    this.metaballRadius = metaballRadius * Math.floor(Math.random() * 2 + 1);
-    this.vertexQuantity = vertexQuantity;
+    this.metaballRadius = metaballRadius;
+    this.containerSize = containerSize;
+    this.metaballFill = metaballFill;
 
     this._getCenter();
-    this._getVertexPoints();
-    this._generateFills();
     this._generateBall();
-    this._addEventListeners();
-
-    // const invertFilter = new ColorMatrixFilter();
-    // invertFilter.negative(true);
-    // this.filters = [alphaThresholdFilter];
-
-
+    this._toSprite();
+    this._addSpriteVariables();
   }
 
   _getCenter() {
     this.center = {
       x:
-        Math.random() * (app.screen.width - this.metaballRadius * 2) +
+        Math.random() * (this.containerSize - this.metaballRadius) +
         this.metaballRadius,
       y:
-        Math.random() * (app.screen.height - this.metaballRadius * 2) +
+        Math.random() * (this.containerSize - this.metaballRadius) +
         this.metaballRadius,
     };
   }
-
   _generateBall() {
-    this.poly(this.vertices).fill(
-      this.fillGradients[Math.floor(Math.random() * this.fillGradients.length)],
-    );
-
+    this.arc(0, 0, this.metaballRadius, 0, Math.PI * 2).fill(this.metaballFill);
   }
 
-  _getVertexPoints() {
-    this.vertices = [];
-
-    for (let i = 0; i < this.vertexQuantity; i++) {
-      let xValue =
-        this.center.x +
-        Math.cos((i / this.vertexQuantity) * (Math.PI * 2)) *
-          this.metaballRadius;
-      let yValue =
-        this.center.y +
-        Math.sin((i / this.vertexQuantity) * (Math.PI * 2)) *
-          this.metaballRadius;
-      this.vertices.push(Math.floor(xValue), Math.floor(yValue));
-    }
+  _toSprite() {
+    const texture = app.renderer.generateTexture(this);
+    this.sprite = Sprite.from(texture);
+    this.sprite.position = this.center;
+    this.destroy();
   }
 
-  _generateFills() {
-    this.fillGradients = [
-      new FillGradient({
-        type: "radial",
-        center: { x: 0.5, y: 0.5 },
-        innerRadius: 0,
-        outerCenter: { x: 0.5, y: 0.5 },
-        outerRadius: 0.5,
-        colorStops: [
-          { offset: 0.25, color: "#000000ff" }, // Center color
-          { offset: 1, color: "#00000000" }, // Edge color
-        ],
-      }),
-    ];
-  }
-
-  _addEventListeners() {
-    this.eventMode = "dynamic";
-
-    this.onmousedown = () => {
-      this.onglobalmousemove = (event) => {
-        const relativePoint = {
-          x: event.globalX - this.center.x,
-          y: event.globalY - this.center.y,
-        };
-        this.position.set(relativePoint.x, relativePoint.y);
-      };
-    };
-
-    this.onmouseup = () => {
-      this.onglobalmousemove = undefined;
-    };
-    this.onmouseupoutside = () => {
-      this.onglobalmousemove = undefined;
-    };
+  _addSpriteVariables() {
+    this.sprite.anchor = 0.5;
+    this.sprite.skew.set(Math.random() / 16, Math.random() / 16);
+    this.sprite.rotationSpeed = Math.cos(Math.random() * Math.PI * 2) / 64;
+    this.sprite.vx = Math.random();
+    this.sprite.vy = Math.random();
   }
 }

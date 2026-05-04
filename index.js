@@ -7,6 +7,7 @@ import {
 } from "pixi.js";
 import { ConfigHandler } from "./modules/ConfigHandler";
 import { Metaball } from "./modules/Metaball";
+import { MetaballSet } from "./modules/MetaballSet";
 
 const vertex = `
   in vec2 aPosition;
@@ -52,13 +53,13 @@ const fragment = `
       }
       else
       {
-          if (fg.a < 0.88)
+          if (fg.a < 0.84)
           {
               fg.a = 0.0;
           }
           else
           {
-              fg.a = fg.a - (0.9 - fg.a) * (0.9 / (0.9 - 0.88));
+              fg.a = fg.a - (0.9 - fg.a) * (0.9 / (0.9 - 0.84));
           }
       }
 
@@ -99,24 +100,26 @@ const inputElements = configHandler.inputElements;
 function generateEmails() {
   if (app.stage.children) app.stage.removeChildren();
 
-  const emailQuantity = inputElements.emailQuantity.get();
-  const emailVertices = inputElements.emailVertices.get();
-  const emailSize = inputElements.emailSize.get();
-
-  for (let i = 0; i < emailQuantity; i++) {
-    const metaball = new Metaball(emailVertices, emailSize);
-    app.stage.addChild(metaball);
+  for (let i = 0; i < 128; i++) {
+    const metaballSet = new MetaballSet({
+      metaballRadius: 128,
+      metaballQuantity: 3,
+      containerSize: 256,
+    });
+    app.stage.addChild(metaballSet);
   }
 }
 
-inputElements.emailVertices.onchange = generateEmails;
-inputElements.emailSize.onchange = generateEmails;
-inputElements.emailQuantity.onchange = generateEmails;
-
 generateEmails();
 
+console.log(app.stage.children);
+
 app.ticker.add(() => {
-  for (const ball of app.stage.children) {
-    console.log(ball)
+  for (const container of app.stage.children) {
+    if (!container.clicked) container.updatePoints();
+
+    for (const ball of container.children) {
+      ball.rotation += ball.rotationSpeed;
+    }
   }
-})
+});
