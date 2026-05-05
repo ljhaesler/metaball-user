@@ -39,7 +39,7 @@ export class MetaballFills {
           outerCenter: { x: 0.5, y: 0.5 },
           outerRadius: 0.5,
           colorStops: [
-            { offset: 0.35, color }, // Center color
+            { offset: 0.4, color }, // Center color
             { offset: 1, color: `${color}00` }, // Edge color
           ],
         }),

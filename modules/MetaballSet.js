@@ -1,5 +1,6 @@
 import { Container } from "pixi.js";
 import { Metaball } from "./Metaball";
+import "pixi.js/advanced-blend-modes";
 import app from "../index";
 
 export class MetaballSet extends Container {
@@ -19,6 +20,7 @@ export class MetaballSet extends Container {
 
     this.metaballQuantity = metaballQuantity;
     this.metaballRadius = metaballRadius;
+    // we immediately get the unique fills for the metaballs that will be present inside the set
     this.metaballFills = metaballFills.returnUniqueFills(this.metaballQuantity);
     this.metaballs = [];
 
@@ -29,7 +31,7 @@ export class MetaballSet extends Container {
     this._addEventListeners();
   }
 
-  updatePoints() {
+  updateChildren() {
     const friction = 0.85;
     const repulsionStrength = 0.02; // Adjust this to control how hard they push away
     const minDistance = this.metaballRadius; // The distance at which repulsion starts (sum of radii + buffer)
@@ -43,6 +45,8 @@ export class MetaballSet extends Container {
 
       for (let j = i + 1; j < this.children.length; j++) {
         const ballB = this.children[j];
+
+        if (ballB.clicked) continue;
 
         const dx = ballB.x - ballA.x;
         const dy = ballB.y - ballA.y;
@@ -125,6 +129,7 @@ export class MetaballSet extends Container {
         new Metaball({
           metaballRadius: this.metaballRadius / (i + 1),
           containerSize: this.containerSize,
+          // a metaball requires a single fillstyle
           metaballFill: this.metaballFills[i],
         }),
       );
@@ -133,36 +138,18 @@ export class MetaballSet extends Container {
 
   _addMetaballsAsChildren() {
     for (const metaball of this.metaballs) {
+      // these metaballs are by default graphics objects, so we have to return the sprite value
       this.addChild(metaball.sprite);
     }
   }
 
   _addEventListeners() {
-    for (const ball of this.children) {
-      ball.eventMode = "dynamic";
-
-      ball.onmousedown = () =>
-        (ball.onglobalmousemove = (event) => {
-          this.clicked = true;
-          ball.clicked = true;
-          const localPoint = this.toLocal({
-            x: event.globalX,
-            y: event.globalY,
-          });
-          ball.position.set(localPoint.x, localPoint.y);
-        });
-
-      ball.onmouseup = () => {
-        this.clicked = false;
-        ball.clicked = false;
-        ball.onglobalmousemove = undefined;
-      };
-      ball.onmouseupoutside = () => {
-        this.clicked = false;
-        ball.clicked = false;
-        ball.onglobalmousemove = undefined;
-      };
-    }
+    // the container checks for click events
+    // this info is then used to stop orbiting when a blob inside the container is clicked
+    this.eventMode = "static";
+    this.onmousedown = () => (this.clicked = true);
+    this.onmouseup = () => (this.clicked = false);
+    this.onmouseupoutside = () => (this.clicked = false);
   }
 
   _addContainerVariables() {
