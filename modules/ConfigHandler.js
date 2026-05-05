@@ -110,7 +110,6 @@ export class ConfigHandler {
     this._createOverlayStructure();
     this._attachEventListeners();
     this._createOptions();
-    console.log(this.inputElements);
   }
 
   _createOverlayStructure() {

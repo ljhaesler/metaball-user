@@ -1,4 +1,4 @@
-import { Graphics, FillGradient, ColorMatrixFilter, Sprite } from "pixi.js";
+import { Graphics, Sprite } from "pixi.js";
 import "pixi.js/advanced-blend-modes";
 import app from "../index.js";
 
@@ -39,9 +39,11 @@ export class Metaball extends Graphics {
 
   _addSpriteVariables() {
     this.sprite.anchor = 0.5;
-    this.sprite.skew.set(Math.random() / 16, Math.random() / 16);
-    this.sprite.rotationSpeed = Math.cos(Math.random() * Math.PI * 2) / 64;
-    this.sprite.vx = Math.random();
-    this.sprite.vy = Math.random();
+    this.sprite.skewSpeed = Math.random() * Math.PI;
+    this.sprite.skewPhaseX = Math.random();
+    this.sprite.skewPhaseY = Math.random();
+    this.sprite.rotationSpeed = Math.cos(Math.random() * Math.PI * 2) / 128;
+    this.sprite.vx = 1;
+    this.sprite.vy = 1;
   }
 }

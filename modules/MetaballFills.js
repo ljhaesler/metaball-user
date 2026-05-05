@@ -1,7 +1,10 @@
-import { FillGradient } from "pixi.js";
+import { FillGradient, Color } from "pixi.js";
 
 export class MetaballFills {
-  constructor() {
+  constructor(colors) {
+    this.colors = colors;
+
+    this._invertColors();
     this._generateFills();
   }
 
@@ -19,41 +22,28 @@ export class MetaballFills {
     return uniqueFills;
   }
 
+  _invertColors() {
+    this.colors = this.colors.map((color) =>
+      new Color(color ^ 0xffffff).toHex(),
+    );
+  }
+
   _generateFills() {
-    this.fillGradients = [
-      new FillGradient({
-        type: "radial",
-        center: { x: 0.5, y: 0.5 },
-        innerRadius: 0,
-        outerCenter: { x: 0.5, y: 0.5 },
-        outerRadius: 0.5,
-        colorStops: [
-          { offset: 0.35, color: "#00ffffff" }, // Center color
-          { offset: 1, color: "#00ffff00" }, // Edge color
-        ],
-      }),
-      new FillGradient({
-        type: "radial",
-        center: { x: 0.5, y: 0.5 },
-        innerRadius: 0,
-        outerCenter: { x: 0.5, y: 0.5 },
-        outerRadius: 0.5,
-        colorStops: [
-          { offset: 0.35, color: "#ffff00ff" }, // Center color
-          { offset: 1, color: "#ffff0000" }, // Edge color
-        ],
-      }),
-      new FillGradient({
-        type: "radial",
-        center: { x: 0.5, y: 0.5 },
-        innerRadius: 0,
-        outerCenter: { x: 0.5, y: 0.5 },
-        outerRadius: 0.5,
-        colorStops: [
-          { offset: 0.35, color: "#ff00ffff" }, // Center color
-          { offset: 1, color: "#ff00ff00" }, // Edge color
-        ],
-      }),
-    ];
+    this.fillGradients = [];
+    for (const color of this.colors) {
+      this.fillGradients.push(
+        new FillGradient({
+          type: "radial",
+          center: { x: 0.5, y: 0.5 },
+          innerRadius: 0,
+          outerCenter: { x: 0.5, y: 0.5 },
+          outerRadius: 0.5,
+          colorStops: [
+            { offset: 0.35, color }, // Center color
+            { offset: 1, color: `${color}00` }, // Edge color
+          ],
+        }),
+      );
+    }
   }
 }

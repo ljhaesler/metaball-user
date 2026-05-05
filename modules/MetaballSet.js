@@ -1,10 +1,14 @@
 import { Container } from "pixi.js";
 import { Metaball } from "./Metaball";
-import { MetaballFills } from "./MetaballFills";
 import app from "../index";
 
 export class MetaballSet extends Container {
-  constructor({ metaballRadius, metaballQuantity, containerSize }) {
+  constructor({
+    metaballRadius,
+    metaballQuantity,
+    containerSize,
+    metaballFills,
+  }) {
     super({
       height: containerSize,
       width: containerSize,
@@ -15,10 +19,10 @@ export class MetaballSet extends Container {
 
     this.metaballQuantity = metaballQuantity;
     this.metaballRadius = metaballRadius;
+    this.metaballFills = metaballFills.returnUniqueFills(this.metaballQuantity);
     this.metaballs = [];
 
     this._getPosition();
-    this._getFills();
     this._generateMetaballs();
     this._addMetaballsAsChildren();
     this._addContainerVariables();
@@ -26,46 +30,81 @@ export class MetaballSet extends Container {
   }
 
   updatePoints() {
-    const minDistance = 10;
-    const repulsionStrength = 2;
-    const attractionStrength = 1;
-    const friction = 0.008;
+    const friction = 0.85;
+    const repulsionStrength = 0.02; // Adjust this to control how hard they push away
+    const minDistance = this.metaballRadius; // The distance at which repulsion starts (sum of radii + buffer)
 
-    for (const ball of this.children) {
-      if (ball.clicked) continue;
-      const dx = this.containerSize / 2 - ball.x;
-      const dy = this.containerSize / 2 - ball.y;
+    // 1. First pass: Calculate repulsion forces between all pairs
+    for (let i = 0; i < this.children.length; i++) {
+      const ballA = this.children[i];
 
-      ball.vx += dx * attractionStrength;
-      ball.vy += dy * attractionStrength;
+      // Skip if clicked (optional, depending on if you want clicked balls to still repel)
+      if (ballA.clicked) continue;
 
-      for (let i = 0; i < this.children.length; i++) {
-        const otherBall = this.children[i];
-        if (otherBall === ball) continue;
+      for (let j = i + 1; j < this.children.length; j++) {
+        const ballB = this.children[j];
 
-        const dx2 = ball.x - otherBall.x;
-        const dy2 = ball.y - otherBall.y;
-        const dist = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+        const dx = ballB.x - ballA.x;
+        const dy = ballB.y - ballA.y;
+        const distanceSq = dx * dx + dy * dy;
 
-        if (dist > 0) {
-          const force = (minDistance - dist) / minDistance;
-          const repulsionX = (dx2 / dist) * force * repulsionStrength;
-          const repulsionY = (dy2 / dist) * force * repulsionStrength;
-          ball.vx += repulsionX;
-          ball.vy += repulsionY;
+        // Only apply repulsion if they are too close
+        if (distanceSq < minDistance * minDistance && distanceSq > 0) {
+          const distance = Math.sqrt(distanceSq);
+
+          // Calculate the normalized direction vector
+          const nx = dx / distance;
+          const ny = dy / distance;
+
+          // Calculate force magnitude (stronger when closer)
+          // We use (minDistance - distance) to get a stronger push as they overlap more
+          const force = (minDistance - distance) * repulsionStrength;
+
+          // Apply equal and opposite forces to both balls
+          ballA.vx -= nx * force;
+          ballA.vy -= ny * force;
+
+          ballB.vx += nx * force;
+          ballB.vy += ny * force;
         }
       }
+    }
 
+    // 2. Second pass: Apply movement, friction, and container attraction
+    for (const ball of this.children) {
+      if (ball.clicked) continue;
+
+      // Container center attraction (your original logic)
+      const dxCenter = this.containerSize / 2 - ball.x;
+      const dyCenter = this.containerSize / 2 - ball.y;
+
+      // Add a small amount of center attraction to velocity
+      ball.vx += dxCenter * 0.03;
+
+      ball.vy += dyCenter * 0.03;
+
+      // Apply friction
       ball.vx *= friction;
       ball.vy *= friction;
+
+      // Update position
       ball.x += ball.vx;
       ball.y += ball.vy;
-    }
-  }
 
-  _getFills() {
-    const metaballFills = new MetaballFills();
-    this.metaballFills = metaballFills.returnUniqueFills(this.metaballQuantity);
+      // Optional: Boundary checks to keep them inside the container
+      if (ball.x < 0) {
+        ball.vx *= -1;
+      }
+      if (ball.x > this.containerSize) {
+        ball.vx *= -1;
+      }
+      if (ball.y < 0) {
+        ball.vy *= -1;
+      }
+      if (ball.y > this.containerSize) {
+        ball.vy *= -1;
+      }
+    }
   }
 
   _getPosition() {
@@ -104,6 +143,7 @@ export class MetaballSet extends Container {
 
       ball.onmousedown = () =>
         (ball.onglobalmousemove = (event) => {
+          this.clicked = true;
           ball.clicked = true;
           const localPoint = this.toLocal({
             x: event.globalX,
@@ -113,10 +153,12 @@ export class MetaballSet extends Container {
         });
 
       ball.onmouseup = () => {
+        this.clicked = false;
         ball.clicked = false;
         ball.onglobalmousemove = undefined;
       };
       ball.onmouseupoutside = () => {
+        this.clicked = false;
         ball.clicked = false;
         ball.onglobalmousemove = undefined;
       };
@@ -124,6 +166,6 @@ export class MetaballSet extends Container {
   }
 
   _addContainerVariables() {
-    this.rotationSpeed = Math.cos(Math.random() * Math.PI * 2) / 128;
+    this.rotationSpeed = Math.cos(Math.random() * Math.PI * 2) / 256;
   }
 }
