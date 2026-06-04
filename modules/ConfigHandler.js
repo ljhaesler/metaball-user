@@ -29,17 +29,13 @@ class InputElement {
     this.get = () => this.input.value;
   }
 
-  set onchange(func) {
-    this.input.onchange = func;
-  }
-
   setDataType(dataType) {
     if (dataType == "float") this.get = () => parseFloat(this.input.value);
 		if (dataType == "int") this.get = () => parseInt(this.input.value);
 		if (dataType == "array") this.get = () => {
 			const str = this.input.value;
 			const converted = str.replace(/0x([0-9a-fA-F]+)/g, (_, hex) => parseInt(hex, 16));
-
+			return JSON.parse(converted);
 		}
     return;
   }

@@ -1,7 +1,8 @@
 import { Application } from "pixi.js";
 import { ConfigHandler } from "./modules/ConfigHandler";
-import { MetaballSetSpawner } from "./modules/MetaballSetSpawner";
+import { MetaballSet } from "./modules/MetaballSet";
 import { filters } from "./modules/Filters";
+import { MetaballFills } from "./modules/MetaballFills";
 
 const app = new Application();
 await app.init({
@@ -23,26 +24,49 @@ const inputElements = configHandler.inputElements;
 
 function generateMetaballs() {
   // if the metaballs are re-generated, remove the previous ones
-  if (app.stage.children) app.stage.removeChildren();
+	if (app.stage.children) app.stage.removeChildren();
+
+	const metaballRadius = inputElements.metaballRadius.get();
+	const metaballQuantity = inputElements.metaballQuantity.get();
+	const containerSize = inputElements.containerSize.get();
+	const metaballColours = inputElements.metaballColours.get();
+	const setQuantity = inputElements.setQuantity.get();
+
+	// we need to generate a single fills instance for the metaballs
+	const metaballFills = new MetaballFills(metaballColours)
+
+	const metaballSets = [];
+	for (let i = 0; i < setQuantity; i++) {
+	  const metaballSet = new MetaballSet({
+	    metaballRadius,
+	    metaballQuantity,
+	    containerSize,
+	    metaballFills,
+		});
+
+		metaballSets.push(metaballSet)
+	}
 
   // a smaller containerSize will lead to a less 'snappy' effect
   // when the blobs are dragged via the mouse.
-  const metaballSetSpawner = new MetaballSetSpawner({
-    metaballRadius: 64,
-    metaballQuantity: 2,
-    containerSize: 128,
-    fillColors: [0xffffff, 0xffaaff, 0xff33ff, 0xff00ff],
-  });
-
-  const metaballSets = metaballSetSpawner.spawnSets(64);
   app.stage.addChild(...metaballSets);
 }
 
 generateMetaballs();
 
+inputElements.metaballRadius.input.onchange = () => generateMetaballs();
+inputElements.metaballQuantity.input.onchange = () => generateMetaballs();
+inputElements.containerSize.input.onchange = () => generateMetaballs();
+inputElements.metaballColours.input.onchange = () => generateMetaballs();
+inputElements.setQuantity.input.onchange = () => generateMetaballs();
+
+
 let t = 0;
+
 app.ticker.add(() => {
-  t += 0.01;
+	t += inputElements.wobbleIntensity.get() || 0.01;
+	const orbitalSpeed = inputElements.orbitalSpeed.get() || 0.5;
+
   for (const metaballSet of app.stage.children) {
     // if the metaballSet is clicked, we stop the set from orbiting
     if (!metaballSet.clicked) {
@@ -50,8 +74,6 @@ app.ticker.add(() => {
       const dcY = metaballSet.y - app.screen.height / 2;
 
       const dc = Math.sqrt(dcX * dcX + dcY * dcY);
-
-      const orbitalSpeed = 0.5;
 
       const vx = (-dcY / dc) * orbitalSpeed;
       const vy = (dcX / dc) * orbitalSpeed;

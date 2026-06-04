@@ -16,8 +16,8 @@ export class MetaballSet extends Container {
       pivot: containerSize / 2,
     });
 
-    this.containerSize = containerSize;
 
+    this.containerSize = containerSize;
     this.metaballQuantity = metaballQuantity;
     this.metaballRadius = metaballRadius;
     // we immediately get the unique fills for the metaballs that will be present inside the set
@@ -29,10 +29,10 @@ export class MetaballSet extends Container {
     this._addMetaballsAsChildren();
     this._addContainerVariables();
     this._addEventListeners();
-  }
+	}
 
   updateChildren() {
-    const friction = 0.85;
+    const friction = 0.9;
     const repulsionStrength = 0.02; // Adjust this to control how hard they push away
     const minDistance = this.metaballRadius; // The distance at which repulsion starts (sum of radii + buffer)
 
@@ -83,9 +83,9 @@ export class MetaballSet extends Container {
       const dyCenter = this.containerSize / 2 - ball.y;
 
       // Add a small amount of center attraction to velocity
-      ball.vx += dxCenter * 0.03;
+      ball.vx += dxCenter * 0.04;
 
-      ball.vy += dyCenter * 0.03;
+      ball.vy += dyCenter * 0.04;
 
       // Apply friction
       ball.vx *= friction;

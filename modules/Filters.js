@@ -2,6 +2,7 @@ import { Filter, GlProgram, ColorMatrixFilter } from "pixi.js";
 
 const maxOutValue = 0.9;
 const floorValue = 0.8;
+const gradientSpace = maxOutValue - floorValue;
 
 const vertex = `
   in vec2 aPosition;
@@ -42,25 +43,18 @@ const fragment = `
   {
       vec4 fg = texture2D(uTexture, vTextureCoord);
 
-      if (fg.a > ${maxOutValue}) {
-          fg.a = 1.0;
+      if (fg.a >= ${maxOutValue}) {
+        fg.a = 1.0;
+      } else if (fg.a <= ${floorValue}) {
+      	fg.a = 0.0;
+      } else {
+      	fg.a = (fg.a - ${floorValue}) / ${gradientSpace};
       }
-      else
-      {
-          if (fg.a < ${floorValue})
-          {
-              fg.a = 0.0;
-          }
-          else
-          {
-              fg.a = fg.a - (${maxOutValue} - fg.a) * (${maxOutValue} / (${maxOutValue} - ${floorValue}));
-          }
-      }
-
 
       gl_FragColor = fg;
   }
 `;
+
 
 const alphaThresholdFilter = new Filter({
   glProgram: new GlProgram({
@@ -71,6 +65,7 @@ const alphaThresholdFilter = new Filter({
 });
 
 const invertFilter = new ColorMatrixFilter();
-invertFilter.negative(false);
+invertFilter.negative();
+
 
 export const filters = [alphaThresholdFilter, invertFilter];

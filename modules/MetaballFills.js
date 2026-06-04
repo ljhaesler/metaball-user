@@ -1,15 +1,17 @@
 import { FillGradient, Color } from "pixi.js";
 
 export class MetaballFills {
-  constructor(colors) {
-    this.colors = colors;
+  constructor(colorSets) {
+		this.colorSets = colorSets;
+    this.fillGradients = [];
 
     this._invertColors();
-    this._generateFills();
+		this._generateFills();
   }
 
-  returnUniqueFills(quantity) {
-    const pool = this.fillGradients.slice();
+	returnUniqueFills(quantity) {
+		const gradientsCopy = this.fillGradients.slice();
+		const pool = gradientsCopy[Math.floor(Math.random() * gradientsCopy.length)].slice();
     const uniqueFills = [];
 
     for (let i = 0; i < quantity; i++) {
@@ -23,27 +25,27 @@ export class MetaballFills {
   }
 
   _invertColors() {
-    this.colors = this.colors.map((color) =>
-      new Color(color ^ 0xffffff).toHex(),
-    );
+		this.colorSets = this.colorSets.map((colorSet) => colorSet.map((color) => new Color(color ^ 0xffffff).toHex()));
   }
 
   _generateFills() {
-    this.fillGradients = [];
-    for (const color of this.colors) {
-      this.fillGradients.push(
-        new FillGradient({
+		for (let i = 0; i < this.colorSets.length; i++) {
+			this.fillGradients[i] = []
+
+			for (let j = 0; j < this.colorSets[i].length; j++) {
+				this.fillGradients[i].push(new FillGradient({
           type: "radial",
           center: { x: 0.5, y: 0.5 },
           innerRadius: 0,
           outerCenter: { x: 0.5, y: 0.5 },
           outerRadius: 0.5,
           colorStops: [
-            { offset: 0.4, color }, // Center color
-            { offset: 1, color: `${color}00` }, // Edge color
+            { offset: 0.4, color: this.colorSets[i][j] }, // Center color
+            { offset: 1, color: `${this.colorSets[i][j]}00` }, // Edge color
           ],
-        }),
-      );
+        })
+				)
+			}
     }
   }
 }
