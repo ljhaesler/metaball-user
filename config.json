@@ -1,13 +1,5 @@
 {
-  "emailVertices": {
-    "inputLabel": "Quantité de Vertex",
-    "inputType": "text",
-    "dataType": "int",
-    "defaultValue": "32",
-    "selectValues": [],
-    "description": ""
-  },
-  "emailSize": {
+  "metaballRadius": {
     "inputLabel": "Taille Email",
     "inputType": "text",
     "dataType": "int",
@@ -15,12 +7,29 @@
     "selectValues": [],
     "description": ""
   },
-  "emailQuantity": {
-    "inputLabel": "Quantité Emails",
+  "metaballQuantity": {
+    "inputLabel": "Quantité de Metaballs par Email",
     "inputType": "text",
     "dataType": "int",
     "defaultValue": "64",
     "selectValues": [],
-    "description": ""
-  }
+    "description": "NOTE: il faut qu'il existe suffisamment de couleurs dans chaque set de couleurs, 3 metaballs par email implique au minimum 3 couleurs par email."
+  },
+  "metaballColours": {
+  	"inputLabel": "Couleurs par Email",
+   	"inputType": "text",
+    "dataType": "array",
+    "defaultValue": "[[0xff0000, 0xff8833], [0x00ff00, 0xaaff33]]",
+    "selectValues": [],
+    "description": "Définit les couleurs des metaballs, selon le nombre de metaballs par email"
+  },
+  "containerSize": {
+	 	"inputLabel": "Taille Contenaire",
+	  "inputType": "text",
+	  "dataType": "int",
+	  "defaultValue": "128",
+	  "selectValues": [],
+	  "description": "Définit l'espace dans laquelle les sets de metaballs puissent s'attirer. Quand un metaball est à l'intérieur de cette limite, il sera attiré immédiatement envers son/ses partenaires."
+  },
+  ≈
 }
