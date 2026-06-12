@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "serve": "esbuild index.js --bundle --outfile=public/build.js --format=esm --watch --serve --servedir=public",
-    "build": "esbuild index.js --bundle --format=esm --minify --outfile=public/build.js"
+    "build": "esbuild index.js --bundle --platform=browser --format=esm --minify --outfile=public/build.js"
   },
   "dependencies": {
     "pixi.js": "^8.18.1"

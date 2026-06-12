@@ -1,58 +1,58 @@
 {
-  "metaballRadius": {
-    "inputLabel": "Taille Email",
-    "inputType": "text",
-    "dataType": "int",
-    "defaultValue": "64",
-    "selectValues": [],
-    "description": ""
-  },
-  "setQuantity": {
- 		"inputLabel": "Quantité d'Emails",
-	  "inputType": "text",
-	  "dataType": "int",
-	  "defaultValue": "16",
-	  "selectValues": [],
-	  "description": ""
-  },
-  "metaballQuantity": {
-    "inputLabel": "Quantité de Metaballs par Email",
-    "inputType": "text",
-    "dataType": "int",
-    "defaultValue": "2",
-    "selectValues": [],
-    "description": "NOTE: il faut qu'il existe suffisamment de couleurs dans chaque set de couleurs, 3 metaballs par email implique au minimum 3 couleurs par email."
-  },
-  "metaballColours": {
-  	"inputLabel": "Couleurs par Email",
-   	"inputType": "text",
-    "dataType": "array",
-    "defaultValue": "[[0xff0000, 0xff8833], [0x00ff00, 0xaaff33]]",
-    "selectValues": [],
-    "description": "Définit les couleurs des metaballs, selon le nombre de metaballs par email"
-  },
-  "containerSize": {
-	 	"inputLabel": "Taille Contenaire",
-	  "inputType": "text",
-	  "dataType": "int",
-	  "defaultValue": "128",
-	  "selectValues": [],
-	  "description": "Définit l'espace dans laquelle les sets de metaballs puissent s'attirer. Quand un metaball est à l'intérieur de cette limite, il sera attiré immédiatement envers son/ses partenaires."
-  },
-  "orbitalSpeed": {
-	 	"inputLabel": "Vitesse d'Orbite",
-	  "inputType": "text",
-	  "dataType": "float",
-	  "defaultValue": "0.5",
-	  "selectValues": [],
-	  "description": "Définit la vitesse d'orbite des emails, autour du centre de l'écran"
-  },
-  "wobbleIntensity": {
-	 	"inputLabel": "Intensité d'Oscillation",
-	  "inputType": "text",
-	  "dataType": "float",
-	  "defaultValue": "0.01",
-	  "selectValues": [],
-	  "description": "Définit l'intensité avec lequel les metaballs 'tremblent'"
-  }
+	"metaballRadius": {
+		"inputLabel": "Taille Email",
+		"inputType": "text",
+		"dataType": "int",
+		"defaultValue": "64",
+		"selectValues": [],
+		"description": ""
+	},
+	"setQuantity": {
+		"inputLabel": "Quantité d'Emails",
+		"inputType": "text",
+		"dataType": "int",
+		"defaultValue": "16",
+		"selectValues": [],
+		"description": ""
+	},
+	"metaballQuantity": {
+		"inputLabel": "Quantité de Metaballs par Email",
+		"inputType": "text",
+		"dataType": "int",
+		"defaultValue": "2",
+		"selectValues": [],
+		"description": "NOTE: il faut qu'il existe suffisamment de couleurs dans chaque set de couleurs, 3 metaballs par email implique au minimum 3 couleurs par email."
+	},
+	"metaballColours": {
+		"inputLabel": "Couleurs par Email",
+		"inputType": "text",
+		"dataType": "string",
+		"defaultValue": "ff0000, ff8833 / 00ff00, aaff33",
+		"selectValues": [],
+		"description": "Définit les couleurs des metaballs, selon le nombre de metaballs par email"
+	},
+	"containerSize": {
+		"inputLabel": "Taille Contenaire",
+		"inputType": "text",
+		"dataType": "int",
+		"defaultValue": "128",
+		"selectValues": [],
+		"description": "Définit l'espace dans laquelle les sets de metaballs puissent s'attirer. Quand un metaball est à l'intérieur de cette limite, il sera attiré immédiatement envers son/ses partenaires."
+	},
+	"orbitalSpeed": {
+		"inputLabel": "Vitesse d'Orbite",
+		"inputType": "text",
+		"dataType": "float",
+		"defaultValue": "0.5",
+		"selectValues": [],
+		"description": "Définit la vitesse d'orbite des emails, autour du centre de l'écran"
+	},
+	"wobbleIntensity": {
+		"inputLabel": "Intensité d'Oscillation",
+		"inputType": "text",
+		"dataType": "float",
+		"defaultValue": "0.01",
+		"selectValues": [],
+		"description": "Définit l'intensité avec lequel les metaballs 'tremblent'"
+	}
 }
